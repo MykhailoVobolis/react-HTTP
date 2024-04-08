@@ -19,7 +19,6 @@ body {
   line-height: 1.5;
   margin: 0;
   display: flex;
-  place-items: center;
   min-width: 320px;
   min-height: 100vh;
 }
@@ -38,7 +37,7 @@ ul,
 ol {
   margin: 0;
   padding: 0;
-  list-style: none;
+  /* list-style: none; */
 }
 
 button {
