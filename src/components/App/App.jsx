@@ -1,14 +1,16 @@
 import { useState, useEffect } from "react";
-import axios from "axios";
 import ArticleList from "../ArticleList/ArticleList";
-import "./App.css";
 import Loader from "../Loader/Loader";
+import Error from "../Error/Error";
+import SearchForm from "../SearchForm/SearchForm";
+import { fetchArticlesWithTopic } from "../../articles-api";
+import "./App.css";
 
 export default function App() {
   // Оголошуємо стани
   const [articles, setArticles] = useState([]);
   const [loading, setLoading] = useState(false);
-  let [color, setColor] = useState("#ffffff");
+  const [error, setError] = useState(false);
 
   useEffect(() => {
     // Оголошуємо асинхронну функцію
@@ -16,17 +18,18 @@ export default function App() {
       try {
         //  Встановлюємо індикатор в true перед запитом
         setLoading(true);
-        setColor("#d83338");
-        // Виконуємо HTTP-запит
-        const response = await axios.get("https://hn.algolia.com/api/v1/search?query=react");
+
+        // Використовуємо HTTP-функцію
+        const data = await fetchArticlesWithTopic("react");
         // Записуємо дані в стан
-        setArticles(response.data.hits);
+        setArticles(data);
       } catch (error) {
-        // Тут будемо обробляти помилку
+        // Тут обробляємо помилку
+        // Встановлюємо стан error в true
+        setError(true);
       } finally {
         // Встановлюємо індикатор в false після запиту
         setLoading(false);
-        setColor("#ffffff");
       }
     }
     // Викликаємо асинхронну функцію одразу після оголошення
@@ -36,8 +39,10 @@ export default function App() {
   return (
     <div>
       <h1>Latest articles</h1>
+      <SearchForm />
+      {error && <Error error={error} />}
       {articles.length > 0 && <ArticleList items={articles} />}
-      <Loader color={color} loading={loading} />
+      <Loader loading={loading} />
     </div>
   );
 }
